@@ -1,0 +1,304 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <malloc.h>
+//学生信息
+typedef struct STUDENT
+{
+char name[30];
+char xh[30];
+int age;
+char cj[20];
+struct STUDENT *next;
+}Student;
+//头结点
+typedef struct Header
+{
+char Classname[30];
+int cnt;
+struct STUDENT*next;
+}Head;
+void menu()
+{
+	system("cls");
+	printf("\n");
+	puts("************************************************************");
+	puts("*       1 初始信息  2录入信息  3显示信息  4追加信息        *");
+	puts("*       5 修改信息  6删除信息  7查找信息  8退出系统        *");
+	puts("************************************************************");
+	fflush(stdout);
+	printf("\n");
+}
+
+//初始化信息
+void init(struct Header*list)
+{
+	puts("你选择的是初始化信息！！！");
+	puts("请输入班级名");
+    scanf("%s",list->Classname);
+    puts("请输入班级人数");
+    scanf("%d",&list->cnt);
+	puts("初始化成功");
+	fflush(stdout);
+}
+
+
+
+//录入信息
+void keyboard(struct Header * list)
+{
+   int j=0,i=0;//计数器
+   Student *tail;//尾指针
+   list->next=NULL;
+   printf("你选择的是录入信息！！！！\n");
+   system("pause");
+   printf("请选择你要录入几个学生信息！！！！\n");
+   scanf("%d",&j);
+   while(j--)//循环开始，以你输入的数为准
+	{
+	Student *stu;
+	stu=(struct STUDENT*)malloc(sizeof(struct STUDENT));//动态申请一个节点
+    printf("请输入第%d个学生姓名，学号，年龄，成绩：\n",++i);
+	stu->next=NULL;//初始化stu的指针
+
+	if(stu==NULL)//如果stu节点为空，说明没有malloc到空间
+	{
+	puts("malloc 错误\n");
+	return ;
+	}
+    if(list->next==NULL)//说明没有输入数据
+	{
+	    list->next=stu;//头节点的下一个指向stu节点
+		tail=stu;//让尾指针指向stu
+		scanf("%s %s %d %s",tail->name,tail->xh,&tail->age,tail->cj );//输入信息
+		fflush(stdin);
+	}
+	else//说明已经输入了数据
+	{   
+		tail->next=stu;//尾指针的下一个指向stu
+		tail=tail->next;//尾指针往下面移动
+		scanf("%s %s %d %s",tail->name,tail->xh,&tail->age,tail->cj);//输入信息
+		fflush(stdin);
+	}
+	}
+}
+
+
+
+//显示信息
+void printinfo(Head*list)
+{
+	Student*p=list->next;
+	puts("你选择的是显示信息！！！");
+	if(p==NULL)
+	puts("你还没有录入信息\n");
+    puts("你输入的学生信息如下：");
+	printf("\n");
+	while(p)
+	{
+	printf("%s %s %d %s",p->name,p->xh,p->age,p->cj);
+
+	printf("\n");
+	p=p->next;
+	}
+   system("pause");
+}
+
+
+
+//追加信息
+void addinfo(struct Header * list)
+{
+	int i,j;
+	Student*p=list->next;
+	Student *stu;
+	stu=(struct STUDENT*)malloc(sizeof(struct STUDENT));
+	stu->next=NULL;
+	puts("你选择的是追加信息！！！");
+	puts("请输入你要在第几个学生后面增加一个学生信息？？？");
+    scanf("%d",&i);
+	j=i;
+	while(--i)
+	{
+		p=p->next;
+	}
+	printf("请第%d个学生姓名，学号，年龄，成绩：\n",++j);
+	scanf("%s %s %d %s",stu->name,stu->xh,&stu->age,stu->cj );//输入信息
+	fflush(stdin);
+	stu->next=p->next;
+	p->next=stu;
+}
+
+
+
+
+//修改信息
+void amendinfo(struct Header * list)
+{   int i;
+	Student*p=list->next;
+	puts("你选择的是修改信息！！！");
+	puts("请选择你要修改第几个学生的信息：");
+	scanf("%d",&i);
+	while(--i) p=p->next;
+	if(p==NULL)
+	{
+		printf("该学生不存在:");
+		return;
+	}
+	else
+	{
+	puts("请选择你要修改的内容：");
+	puts("1学生姓名 **** 2学生学号 **** 3学生年龄  ****  4学生成绩");
+	fflush(stdout);
+	scanf("%d",&i);
+    switch(i)
+	{
+	case 1:printf("原信息为%s\n",p->name);printf("请输入你要修改的内容\n");scanf("%s",p->name);break;
+	case 2:printf("原信息为%s\n",p->xh);printf("请输入你要修改的内容\n");scanf("%s",p->xh);break;
+	case 3:printf("原信息为%d\n",p->age);printf("请输入你要修改的内容\n");scanf("%d",p->age);break;
+	case 4:printf("原信息为%s\n",p->cj);printf("请输入你要修改的内容\n");scanf("%s",p->cj);break;
+    default:printf("你的选择有误\n");break;
+	}
+	fflush(stdin);
+	return;
+	}
+}
+
+
+//删除信息
+void deletinfo(struct Header * list)
+{
+	int i,flag=1;
+	Student*p=list->next;
+    Student*q=list->next;
+	Student*k=list->next;
+	list->next=NULL;
+	puts("你选择的是删除信息！！！");
+	puts("请输入你要删除的第几个学生的信息：");
+	scanf("%d",&i);
+	if(i==1)
+	{
+		p=p->next;
+		list->next=p;
+		free(q);
+		return;
+	}
+	while(--i)
+	{ 
+	p=p->next;
+	if(flag==0)
+	{
+	q=q->next;
+	}
+	flag=0;
+	}
+
+	if(p->next==NULL){
+		q->next=NULL;
+        list->next=k;
+		free(p);
+		puts("删除完毕\n");
+       return;
+	}
+	if(p==NULL)
+	puts("该学生不存在\n");
+
+	q->next=p->next;
+	list->next=k;
+	free(p);
+	puts("删除完毕\n");
+}
+
+
+
+//查找信息
+void findinfo(struct Header * list)
+{
+	    int i;
+		Student*p=list->next;
+	    char Xh[20];
+		char Xm[20];
+		puts("你选择的是查找信息！！！");
+		puts("请选择你想查找的方式！！");
+		puts("1 按学号查找 *** 2 按姓名查找");
+		scanf("%d",&i);
+		if(i!=1&&i!=2)
+		{
+			puts("你的选择出错\n");
+			return;
+		}
+		if(i==1)
+		{   printf("请输入该生的学号\n");
+		   scanf("%s",Xh);
+			while(p)
+			{
+				if(strcmp(Xh,p->xh)==0)
+				{
+			printf("该生的信息如下\n");
+			printf("%s %s %d %s",p->name,p->xh,p->age,p->cj);
+			system("pause");
+			break;
+				}
+			p=p->next;
+			}
+		}
+		else
+			{
+			printf("请输入该生的姓名\n");
+		    scanf("%s",Xm);
+			while(p)
+			{
+			if(strcmp(Xm,p->name)==0)
+			{ 
+			printf("该生的信息如下\n");
+			printf("%s %s %d %s",p->name,p->xh,p->age,p->cj);
+			system("pause");
+			break;
+			}	
+			p=p->next;
+			}
+		}
+}
+//退出系统
+int Returnsystem()
+{ 
+	int i;
+	puts("你选择的是退出系统！！！");
+	puts("1  确认退出*****0   重新开始");
+	scanf("%d",&i);
+	return i;
+}
+
+int lend(struct Header * list)
+{
+	int i,j=0;
+	printf("请选择你要进行的操作\n");
+	scanf("%d",&i);
+	switch(i)
+	{ 
+	case 1:init(&list);break;
+	case 2:keyboard(&list);break;
+	case 3:printinfo(&list);break;
+	case 4:addinfo(&list);break;
+	case 5:amendinfo(&list);break;
+	case 6:deletinfo(&list);break;
+	case 7:findinfo(&list);break;
+	case 8:j=Returnsystem();goto LEEP;break;
+	default:printf("你的选择有误\n");break;
+	}
+LEEP:return j;
+
+}
+//主函数
+void main(){
+    Head list;
+	int j,m=0;
+	while(1)
+	{
+	menu();
+	j=lend(&list);
+	if(j==1)
+		return;
+	
+	}
+}
